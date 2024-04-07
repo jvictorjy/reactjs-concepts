@@ -12,22 +12,29 @@ export function Post({ author, publishedAt, content}) {
         { locale: ptBR, addSuffix: true, },
     )
 
-    const [newCommentText, serNewCommentText] = useState('')
+    const [newCommentText, setNewCommentText] = useState('')
 
      function handleCreateNewComment() {
          event.preventDefault();
 
          setComments([...comments, newCommentText]);
-         serNewCommentText('');
+         setNewCommentText('');
      }
 
      function handleNewCommentChange() {
-         serNewCommentText(event.target.value);
+         event.target.setCustomValidity('');
+         setNewCommentText(event.target.value);
      }
 
      function deleteComment(comment) {
             setComments(comments.filter(c => c !== comment));
      }
+
+     function handleNewCommentInvalid() {
+            event.target.setCustomValidity('O comentário não pode ser vazio');
+     }
+
+     const isCommentEmpty = newCommentText.length === 0;
 
     return(
         <article className={styles.post}>
@@ -65,10 +72,14 @@ export function Post({ author, publishedAt, content}) {
                     placeholder="Deixe um comentário"
                     value={newCommentText}
                     onChange={handleNewCommentChange}
+                    onInvalid={handleNewCommentInvalid}
+                    required
                 />
 
                 <footer>
-                    <button type="submit">Publicar</button>
+                    <button type="submit" disabled={isCommentEmpty}>
+                        Publicar
+                    </button>
                 </footer>
             </form>
 
